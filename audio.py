@@ -143,3 +143,9 @@ def bgm_generator(gerne: str, length: str) -> AudioSegment:
     sound = sound.fade_out(1000)
 
     return sound
+
+# Process parallelly
+def multithread_audio_generator(setences):
+    #
+    audios, lengths, ListOfTimeStampes = 0, 0, 0
+    return audios, lengths, ListOfTimeStampes

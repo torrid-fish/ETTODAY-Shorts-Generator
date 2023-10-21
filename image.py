@@ -47,8 +47,8 @@ def picture_generator(imageDescription: str) -> Image:
     return img
 
 def get_img(imgDescription: str, imgs) -> Image:
-  if imgDescription[:3] == "img":
-    img = imgs[int(imgDescription[3])]
-    return img
-  else:
-    return picture_generator(imgDescription)
+    if imgDescription[:3] == "img":
+        img = imgs[int(imgDescription[3:])]
+        return img, True
+    else:
+        return picture_generator(imgDescription), False

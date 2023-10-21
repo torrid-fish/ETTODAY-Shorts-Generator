@@ -1,9 +1,9 @@
 from script import script_generator
 from image import get_img
-from audio import human_voice_generator, effect_generator, bgm_generator
-from PIL import Image
+from audio import multithread_audio_generator, bgm_generator
+import PIL
 
-def main(length: int, text: str, imgs: list[Image.Image], imgsDescription: list[str], gerne: str, dest: str) -> bool:
+def main(length: int, text: str, imgs: list[str], imgsDescription: list[str], gerne: str, dest: str) -> bool:
     """
     ## Args
     - length: The length of the video.
@@ -20,65 +20,51 @@ def main(length: int, text: str, imgs: list[Image.Image], imgsDescription: list[
         # Generate scipt to read
         print("Generating script ... ", end='', flush=True)
         sentences = script_generator(text, length, imgsDescription)
-        title = sentences[0]["title"]
-        titleKeywords = sentences[0]["keyword"]
-        intro = sentences[0]["outline"][1]
-        outro = sentences[0]["outline"][0] 
+
+        print(sentences)
 
         print("Complete!", flush=True)
 
         print("Generating audio and images ... ", end='', flush=True)
+        # Parallelly create audios
+        ListOfAudio, ListOfLength, ListOfTimeStampes, ListOfText, ListOfKeywords = multithread_audio_generator(sentences)
+
+        # Create images
+        ListOfImage = []
+        ListOfImageReal = []
+        for s in sentences:
+            if s["imageDescription"]:
+                img, r = get_img(s["imageDescription"])
+                ListOfImage.append(img)
+                ListOfImageReal.append(r)
+
+        # Create data
         data = []
-        # Generate title audio
-        audio, length, timeStampes = human_voice_generator(title, titleKeywords, gerne, addEffect=False, reader="F1")
-        data.append({
-            "text": title,
-            "length": length,
-            "keywords": titleKeywords,
-            "timeStamps": timeStampes,
-            "image": None
-        })
-        # Generate intro audio
-        _audio, length, timeStampes = human_voice_generator(intro, [], gerne) # No keywords
-        audio += _audio
-        data.append({
-            "text": intro,
-            "length": length,
-            "keywords": None,
-            "timeStamps": None,
-            "image": None
-        })
-        # Generate content audio
-        for setence in sentences[1:]:
-            script = setence["script"]
-            imageDescription = setence["imageDescription"]
-            keywords = setence["keywords"]
-            _audio, length, timeStampes = human_voice_generator(script, keywords, gerne)
-            audio += _audio
+        for i in range(len(ListOfAudio)):
             data.append({
-                "text": script,
-                "length": length,
-                "keywords": keywords,
-                "timeStamps": timeStampes,
-                "image": get_img(imageDescription, imgs)
+                "text": ListOfText[i],
+                "length": ListOfLength[i],
+                "keywords": ListOfKeywords[i],
+                "timeStamps": ListOfTimeStampes[i],
+                # First sentence and second sentence is title and intro, they share the same image
+                "image": ListOfImage[i-1] if i >= 2 else ListOfImage[0], 
+                "imageReal": ListOfImageReal[i-1] if i >= 2 else ListOfImageReal[0] 
             })
-        # Generate outro audio
-        _audio, length, timeStampes = human_voice_generator(outro, [], gerne) # No keywords
-        audio += _audio
-        data.append({
-            "text": outro,
-            "length": length,
-            "keywords": None,
-            "timeStamps": None,
-            "image": None
-        })
+
+        # Merge audios
+        audio = ListOfAudio[0]
+        for a in ListOfAudio[1:]:
+            audio += a
+    
+        # Generate bgm
         totalLength = len(audio)
         bgm = bgm_generator(gerne, totalLength)
         audio = audio.overlay(bgm, position=0)
+
         print("Complete!", flush=True)
 
         # Start producing video
-        print("Generating video ... ", end='', flush=True)
+        # print("Generating video ... ", end='', flush=True)
         '''
         # Start to apply video editing here: 
         - audio: Final audio data
@@ -88,10 +74,16 @@ def main(length: int, text: str, imgs: list[Image.Image], imgsDescription: list[
             - "length"
             - "keywords"
             - "timeStamps"
-            - "images"
+            - "image"
+            - "imageReal"
         '''
-
-        print("Complete!")
+        i = 0
+        for d in data:
+            print(d["text"])
+            if d["image"] != None and not isinstance(d["image"], str):
+                d["image"].save(f"./temp{i}.png")
+                i += 1
+        # print("Complete!")
         return True
     except ...:
         return False
