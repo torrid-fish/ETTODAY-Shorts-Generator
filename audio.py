@@ -80,21 +80,36 @@ def human_voice_generator(text: str, keywords: list, gerne: str, fileName: str, 
 
     #########################################################################
     # Current Strategy: Directly compute based on the position of each char #
+    #                   Start from first char until we found the match char #
     #########################################################################   
     keywordsTimeStamp = []
-    for key in keywords:
-        if not key: continue # key might be empty ['']
-        idx = text.find(key[0])
-        timeStamp = int(length * idx / len(text) - advance)
-        if addEffect:
-            effect = AudioSegment.from_file(effect_generator(gerne, key))
-            timeStamp -= max(0, timeStamp + len(effect) - length) # Last effect might exceed boundary
-            sound = sound.overlay(effect, position=timeStamp)
+    nonExistKeywordIndex = []
+    for keyidx in range(len(keywords)):
+        i = 0
+        while i < len(keywords[keyidx]):
+            idx = text.find(keywords[keyidx][i])
+            if idx != -1:
+                timeStamp = int(length * (idx-i) / len(text) - advance)
+                if addEffect:
+                    effect = AudioSegment.from_file(effect_generator(gerne, keywords[keyidx]))
+                    timeStamp -= max(0, timeStamp + len(effect) - length) # Last effect might exceed boundary
+                    sound = sound.overlay(effect, position=timeStamp)
+                break
+            i += 1
+        else: 
+            timeStamp = -1 # No effect is added
+            nonExistKeywordIndex.append(keyidx)
+
         keywordsTimeStamp.append(timeStamp)
     #########################################################################
 
     # Sanity Check
     assert len(keywords) == len(keywordsTimeStamp), "Keywords lengths didn't match"
+    
+    # Remove non-exist keyword
+    for i in range(len(nonExistKeywordIndex)-1, -1, -1):
+        del keywords[nonExistKeywordIndex[i]]
+        del keywordsTimeStamp[nonExistKeywordIndex[i]]
     
     # Return
     return sound, length, keywordsTimeStamp
@@ -124,7 +139,6 @@ def bgm_generator(gerne: str, length: str) -> AudioSegment:
     sound = sound.fade_in(1000)
     sound = sound.fade_out(1000)
 
-    time.sleep(0.5)
     return sound
 
 
@@ -162,7 +176,7 @@ def audio_generator(sentences, gerne, singleThread=False):
     # Parallel generating audio
     else:
         print(" - [Multiple Threads] Generating audio ... ", flush=True, end='')
-        with ThreadPoolExecutor(max_workers=10) as executor:
+        with ThreadPoolExecutor(max_workers=5) as executor:
             futures = []
             futures.append(executor.submit(human_voice_generator, ListOfText[0], ListOfKeywords[0], gerne, '0', addEffect=False, reader="F1"))
 
