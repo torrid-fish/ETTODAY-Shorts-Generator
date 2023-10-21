@@ -28,9 +28,13 @@ img{
     display: inline-block;
     margin-right: 16cm;
 }
-#add_another{
-    margin-left: 16cm;
+#descriptions{
+    display: inline-block;
+    width: 96%;
+    align-content: start;
+    
 }
+
 /* Style the submit button */
 /* input[type=submit] {
 background-color: #04AA6D;
@@ -41,19 +45,27 @@ border-radius: 4px;
 cursor: pointer;
 float: right;
 } */
-button {
-background-color: #2F2873;
-color: white;
-border: none;
-border-radius: 5px;
-padding: 10px 20px;
-cursor: pointer;
-transition: background-color 0.3s ease;
+
+#icon-cancel{
+    text-align: center;
 }
 button:hover {
     background-color: #4FACDC;
 }
-
+.col-75 .file-upload {
+    /* align-items: auto; Vertical alignment */
+    /* display: flex;
+    flex-direction: column; */
+}
+#pui{
+    display: flex;
+    flex-direction: column;
+}
+.upRow{
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+}
 /* Style the container */
 /* .container {
 border-radius: 5px;
@@ -68,13 +80,27 @@ padding: 20px;
     background-color: white;
     border-radius: 10px;
     box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+}
+.container button {
+    background-color: #2F2873;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+#add_another{
+    margin-top: 0.5em;
+    text-align: right;
+}
+#process-button{
     text-align: center;
 }
 textarea {
     width: 100%;
     margin-bottom: 20px;
 }
-
 /* Floating column for labels: 25% width */
 .col-25 {
 float: left;
@@ -89,6 +115,11 @@ width: 75%;
 margin-top: 6px;
 }
 
+#file-upload-container{
+    display: flex;
+    flex-direction: column;
+}
+
 /* Clear floats after the columns */
 .row:after {
 content: "";
@@ -101,7 +132,13 @@ clear: both;
     background-color: #f0f0f0;
     border-radius: 5px;
 }
-
+/* #icon-parent{
+    vertical-align: bottom;
+    display: inline-block;
+    align-content: center;
+    width: 10%;
+    height: 100%;
+} */
 /* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
 @media screen and (max-width: 600px) {
 .col-25, .col-75, input[type=submit] {
@@ -109,3 +146,8 @@ clear: both;
     margin-top: 0;
 }
 }
+
+/* .big_parent {
+    display: flex;
+    flex-direction: column;
+} */

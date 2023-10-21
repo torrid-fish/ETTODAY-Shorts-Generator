@@ -5,19 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shorts producer</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
     <h1><img src="{{ url_for('static', filename='ettoday_logo_circle.png') }}" style="width: 35px; height: 35px;"> Shorts Producer</h1>
     <div class="container">
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
           <div class="row">
             <div class="col-25">
-              <label for="shortsTitle">Title</label>
+              <label for="shortsLength">Length</label>
             </div>
             <div class="col-75">
-              <input type="text" id="shortsTitle" name="shortsTitle" placeholder="Title of Shorts..">
+              <input type="text" id="shortsLength" name="shortsLength" placeholder="Length of Shorts..">
             </div>
           </div>
+
           <div class="row">
             <div class="col-25">
               <label for="shortsLabels">Labels</label>
@@ -26,22 +28,29 @@
               <input type="text" id="shortsLabels" name="shortsLabels" placeholder="format: label1, label2, label3...">
             </div>
           </div>
+
           <div class="row" id="file-upload-container">
-            <div class="col-25">
-                <label for="imageUpload">Upload Images</label>
-            </div>
-            <div class="col-75">
-                <button type="button" id="add_another" onclick="addFileUpload()">Add Another</button>
-            </div>
-            <div class="col-25">
-            </div>
-            <div class="col-75">
-                <div class="file-upload">
-                    <input type="file" id="image_upload" name="uploaded_images" multiple >
-                    <input type="text" name="descriptions" placeholder="Description for the file...">
+            <div>
+                <div class="col-25">
+                    <label for="imageUpload">Upload Images</label>
+                </div>
+                <div id="add_another" class="col-75">
+                    <button type="button" id="add_another" onclick="addFileUpload()">Add Another</button>
                 </div>
             </div>
-          </div>        
+            <div class="big-parent">
+                <div class="col-25">
+                </div>
+                <div class="col-75">
+                    <div class="file-upload">
+                        <input type="file" id="image_upload" name="uploaded_images" multiple >
+                        <input type="text" id= "descriptions" name="descriptions" placeholder="Description for the file...">
+                        <i class="fa fa-close" style="font-size: 2rem;color:red;vertical-align: bottom;padding-bottom: 0.2em;" onclick="removeFileUpload(this)"></i>
+                    </div>
+                </div>
+            </div>
+          </div>
+       
           <div class="row">
             <div class="col-25">
                 <label for="input_text">Enter News Report</label>
@@ -51,7 +60,7 @@
               <textarea id="input_text" name="input_text" placeholder="Provide the text.." style="height:200px"></textarea>
             </div>
           </div>
-          <div class="row">
+          <div id="process-button" class="row">
             <button type="submit">Process Text</button>
           </div>
         </form>
@@ -62,22 +71,108 @@
         {% endif %}
       </div>
     <script>
+        var count = 0;
         function addFileUpload() {
             var container = document.getElementById('file-upload-container');
+            var uniqueId = Date.now();
             var newInputDiv = document.createElement('div');
-            newInputDiv.className = 'file-upload';
+            newInputDiv.className = 'big-parent';
             newInputDiv.innerHTML = `
             <div class="col-25">
             </div>
             <div class="col-75">
                 <div class="file-upload">
                     <input type="file" id="image_upload" name="uploaded_images" multiple>
-                    <input type="text" name="descriptions" placeholder="Description for the file...">
+                    <input type="text" id= "descriptions" name="descriptions" placeholder="Description for the file...">
+                    <i class="fa fa-close" style="font-size: 2rem;color:red;vertical-align: bottom;padding-bottom: 0.2em;" onclick="removeFileUpload(this)"></i>
                 </div>
             </div>
             `;
             container.appendChild(newInputDiv);
         }
+        function removeFileUpload(button) {
+            console.log('what the');
+            // Get the parent element (file-upload div) of the clicked button
+            console.log("1 up: " + button.parentElement.className);
+            console.log("2 up: " + button.parentElement.parentElement.className);
+            console.log("3 up: " + button.parentElement.parentElement.parentElement.className);
+            var fileUploadDiv = button.parentElement.parentElement;
+            var upper = fileUploadDiv.parentElement
+            console.log("Upper Element ID: " + upper.className);
+            // Remove the parent element from the DOM
+            var rowCount = document.querySelectorAll('.big-parent').length;
+            if (rowCount > 1) {
+                // Remove the parent element from the DOM
+                upper.remove();
+            } else {
+                alert("You cannot remove the last row.");
+                // Optionally, you can handle this case in a way suitable for your application, like showing an alert message.
+        
+            }
+
+        }
+        
+        function validateForm() {
+            var length = document.getElementById("shortsLength").value;
+            var labels = document.getElementById("shortsLabels").value;
+            var inputText = document.getElementById("input_text").value;
+            var decription = document.getElementById("descriptions").value;
+            var fileUploads = document.querySelectorAll('.big-parent input[type="file"]');
+            var descriptions = document.querySelectorAll('.big-parent input[name="descriptions"]');
+
+            // Check if length, labels, inputText, and at least one file upload are filled out
+            
+            if(length.trim() === "" || isNaN(length)){
+                alert("Please fill in a digit.");
+                return false; // Prevent the form from submitting
+            }
+            else if(labels.trim() === ""){
+                alert("Please fill in the labels.");
+            }
+            else if (!hasUploadedFiles(fileUploads)) {
+                alert("Please upload at least one file.");
+                return false; // Prevent the form from submitting
+            }
+            else if(!haveDescriptions(descriptions)){
+                alert("Please fill in description.");
+                return false; // Prevent the form from submitting
+            }
+            else if(inputText.trim() === ""){
+                alert("Please fill in text.");
+                return false; // Prevent the form from submitting
+            }
+            
+            else if(fileUploads.length == 0){
+                alert("Please upload at least one file.");
+                return false; // Prevent the form from submitting
+            }
+            // Optionally, you can add more specific validation logic for individual input fields if needed.
+
+            // If all fields are filled out correctly, the form will be submitted
+            return true;
+        }
+
+        function hasUploadedFiles(fileInputs) {
+            for (var i = 0; i < fileInputs.length; i++) {
+                var fileInput = fileInputs[i];
+                if (fileInput.files.length == 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function haveDescriptions(descriptionInputs) {
+            for (var i = 0; i < descriptionInputs.length; i++) {
+                var descriptionInput = descriptionInputs[i];
+                if (descriptionInput.value.trim() === "") {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+
     </script>
 </body>
 </html>

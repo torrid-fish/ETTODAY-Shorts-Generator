@@ -20,7 +20,6 @@ multidict==6.0.4
 openai==0.28.1 
 yarl==1.9.2
 requests==2.26.0
-waitress==2.1.2
 flask==3.0.0
 ```
 You also need to install `ffmpeg` to edit audio (pydub relies on it):
@@ -31,19 +30,12 @@ apt-get update && apt-get upgrade
 ```
 apt-get install ffmpeg
 ```
-
-If you are not using virtual enviornment (on wsl), you might need to install waitress this way:
-```
-sudo apt-get install python3-waitress
-```
 ## How to start the webpage server
 Use the following command to start the webpage server:
 ```
-waitress-serve --port=5000 webpage:app
+python3 webpage.py
 ```
-After the webpage is built, then you can visit the webpage through this link:
-http://localhost:5000/
-
+After the webpage is built, then you can visit the webpage by clicking the link below (in the terminal).
 ## What APIs do we use
 We use serveral APIs to complete this project. Including OpenAI, Yating TTS, and DeepAI.
 
