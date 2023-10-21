@@ -7,8 +7,7 @@
 
 - `audio.py`
     - Functions regarding audio
-    - `human_voice_generator(text, keywords, gerne, addBeep, advance, speed, reader)`
-    - `effect_generator(gerne, keyword)`
+    - `human_voice_generator(text, keywords, gerne, addEffect, advance, speed, reader:)`
     - `bgm_generator(gerne, length)`
 - `/bgm`
     - The bgm list
@@ -21,6 +20,7 @@
     - `script_generator(text, length, imgsDescription)`
 - `image.py`
     - The fun tions that will generate image
+    - `get_img(imgDescription)`
     - `picture_generator(imageDescription)`
 ## Dependencies
 Please check `requirement.txt`.
@@ -40,10 +40,13 @@ apt-get install ffmpeg
 ## Done List
 - Basic audio processing
 - Script generator
-- Image (Still processing...)
+- Image Done (Generate image)
+- Main function merged (half)
+
 ## Todo List
 The are few things that we must complete:
-- Merge all functions
+- Apply video editing based on what we have
+- Merge the front end with main function
 
 There are few things that we might be able to imporve:
 - Use threads to speed up API querying

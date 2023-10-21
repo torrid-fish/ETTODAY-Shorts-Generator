@@ -1,7 +1,9 @@
 from script import script_generator
+from image import get_img
 from audio import human_voice_generator, effect_generator, bgm_generator
+from PIL import Image
 
-def main(length: int, text: str, imgs: list[str], imgsDescription: list[str], gerne: str, dest: str) -> bool:
+def main(length: int, text: str, imgs: list[Image.Image], imgsDescription: list[str], gerne: str, dest: str) -> bool:
     """
     ## Args
     - length: The length of the video.
@@ -13,6 +15,7 @@ def main(length: int, text: str, imgs: list[str], imgsDescription: list[str], ge
     ## Return
     - (bool): Whether the video is successfully generated.
     """
+    
     try:
         # Generate scipt to read
         sentences = script_generator(text, length, imgsDescription)
@@ -26,7 +29,6 @@ def main(length: int, text: str, imgs: list[str], imgsDescription: list[str], ge
 
         # Generate audio
         data = []
-        totalLength = 0
         ## Generate title audio
         audio, length, timeStampes = human_voice_generator(title, titleKeywords, gerne, addEffect=False, reader="F1")
         data.append({
@@ -36,7 +38,6 @@ def main(length: int, text: str, imgs: list[str], imgsDescription: list[str], ge
             "timeStamps": timeStampes,
             "image": None
         })
-        totalLength += length
         print("Title audio Generated!", flush=True)
         ## Generate intro audio
         _audio, length, timeStampes = human_voice_generator(intro, [], gerne) # No keywords
@@ -48,13 +49,13 @@ def main(length: int, text: str, imgs: list[str], imgsDescription: list[str], ge
             "timeStamps": None,
             "image": None
         })
-        totalLength += length
         print("Intro audio Generated!", flush=True)
         ## Generate content audio
         i = 0
         for setence in sentences[1:]:
             i += 1
             script = setence["script"]
+            imageDescription = setence["imageDescription"]
             keywords = setence["keywords"]
             _audio, length, timeStampes = human_voice_generator(script, keywords, gerne)
             audio += _audio
@@ -63,11 +64,10 @@ def main(length: int, text: str, imgs: list[str], imgsDescription: list[str], ge
                 "length": length,
                 "keywords": keywords,
                 "timeStamps": timeStampes,
-                "image": None
+                "image": get_img(imageDescription, imgs)
             })
-            totalLength += length
             print(f"Generating content... {int(100 * i / (len(sentences)-1))}%", flush=True)
-            
+
 
         ## Generate outro audio
         _audio, length, timeStampes = human_voice_generator(outro, [], gerne) # No keywords
@@ -79,12 +79,12 @@ def main(length: int, text: str, imgs: list[str], imgsDescription: list[str], ge
             "timeStamps": None,
             "image": None
         })
-        totalLength += length
         print("Outro audio Generated!", flush=True)
         
-        assert len(audio) == totalLength, "Error: Audio length didn't match."
-        bgm = bgm_generator(gerne, length)
+        totalLength = len(audio)
+        bgm = bgm_generator(gerne, totalLength)
         audio = audio.overlay(bgm, position=0)
+
         print("BGM audio Generated!", flush=True)
 
         # Start producing video
@@ -98,6 +98,7 @@ def main(length: int, text: str, imgs: list[str], imgsDescription: list[str], ge
             - "timeStamps"
             - "images"
         '''
+        
         # Simple test
         audio.export("./result.wav", format="wav")
         print(totalLength)
@@ -113,4 +114,4 @@ text = "在清華大學的梅竹黑客松，有超過100位學生參加。許多
 imgsDescription = ["學生在電腦前認真編寫程式碼"]
 gerne="科技"
 
-main(length=length, text=text, imgsDescription=imgsDescription, gerne=gerne, imgs=[], dest="")
+main(length=length, text=text, imgsDescription=imgsDescription, gerne=gerne, imgs=["./temp.png"], dest="none")

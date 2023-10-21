@@ -47,5 +47,9 @@ def picture_generator(imageDescription: str) -> Image:
     img = Image.open(BytesIO(image_response.content))
     return img
 
-img = picture_generator("一群清華學生帶著行李離開校園")
-img.save('./temp.png')
+def get_img(imgDescription: str, imgs) -> Image:
+  if imgDescription[:3] == "img":
+    img = imgs[int(imgDescription[3])]
+    return img
+  else:
+    return picture_generator(imgDescription)

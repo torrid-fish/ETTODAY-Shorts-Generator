@@ -100,6 +100,7 @@ def human_voice_generator(text: str, keywords: list, gerne: str, addEffect = Tru
     #########################################################################   
     keywordsTimeStamp = []
     for key in keywords:
+        if not key: continue # key might be empty ['']
         idx = text.find(key[0])
         timeStamp = int(length * idx / len(text) - advance)
         if addEffect:
