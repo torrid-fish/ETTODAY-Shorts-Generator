@@ -25,7 +25,7 @@
 ## Dependencies
 Please check `requirement.txt`.
 
-Use `pip install requirement.txt` to install those dependencies.
+Use `pip install -r requirement.txt` to install those dependencies.
 
 ```
 Yating-TTS-SDK==0.1.2
@@ -43,6 +43,9 @@ flask==3.0.0
 ```
 > You also need to install `ffmpeg` to edit audio (pydub relies on it):
 
+```
+apt-get update && apt-get upgrade
+```
 ```
 apt-get install ffmpeg
 ```

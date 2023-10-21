@@ -40,6 +40,7 @@ def picture_generator(imageDescription: str) -> Image:
     headers={'api-key': 'quickstart-QUdJIGlzIGNvbWluZy4uLi4K'},
 
     )
+    print(r.json())
     image_url = r.json()["output_url"]
     #image_url = response.data[0].url
     image_response = requests.get(image_url)
@@ -51,4 +52,5 @@ def get_img(imgDescription: str, imgs) -> Image:
         img = imgs[int(imgDescription[3:])]
         return img, True
     else:
-        return picture_generator(imgDescription), False
+        return imgs[0], False
+        #return picture_generator(imgDescription), False

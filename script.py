@@ -22,7 +22,7 @@ example_output = \
 [
 {
     "title":"嘉義幼童火災喪命 家庭瞬間破碎",
-    "keyword":["嘉義火災","2幼童喪命"],
+    "keywords":["幼童喪命"],
     "outline":["最後提醒各位觀眾注意家庭安全","讓我們期許悲劇不再發生"],
     "imageDescription":"火災場景的照片"
 },
@@ -100,7 +100,7 @@ practice_answer = \
 [
     {
     "title":"清大學生爆「10天停電6次」慘況",
-    "keyword":["清華大學","停電慘況"],
+    "keywords":["清華大學","停電慘況"],
     "outline":["最後，我們必須強調學生權益的重要性","一起來看看他們經歷了什麼"],
     "imageDescription":"清華大學停電的圖片"
     },
