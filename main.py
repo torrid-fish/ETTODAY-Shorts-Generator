@@ -21,6 +21,9 @@ def main(length: int, text: str, imgs: list[str], imgsDescription: list[str], ge
         intro = sentences[0]["outline"][1]
         outro = sentences[0]["outline"][0] 
 
+        print("Script Generated!", flush=True)
+        print(sentences)
+
         # Generate audio
         data = []
         totalLength = 0
@@ -34,8 +37,9 @@ def main(length: int, text: str, imgs: list[str], imgsDescription: list[str], ge
             "image": None
         })
         totalLength += length
+        print("Title audio Generated!", flush=True)
         ## Generate intro audio
-        _audio, length, timeStampes = human_voice_generator(intro, []) # No keywords
+        _audio, length, timeStampes = human_voice_generator(intro, [], gerne) # No keywords
         audio += _audio
         data.append({
             "text": intro,
@@ -45,37 +49,43 @@ def main(length: int, text: str, imgs: list[str], imgsDescription: list[str], ge
             "image": None
         })
         totalLength += length
+        print("Intro audio Generated!", flush=True)
         ## Generate content audio
+        i = 0
         for setence in sentences[1:]:
+            i += 1
             script = setence["script"]
-            imageDescription = sentences["imageDescription"]
             keywords = setence["keywords"]
-            _audio, length, timeStampes = human_voice_generator(script, keywords)
+            _audio, length, timeStampes = human_voice_generator(script, keywords, gerne)
             audio += _audio
             data.append({
                 "text": script,
                 "length": length,
                 "keywords": keywords,
-                "timeStamps": timeStampes
-                #"image": image,
+                "timeStamps": timeStampes,
+                "image": None
             })
             totalLength += length
+            print(f"Generating content... {int(100 * i / (len(sentences)-1))}%", flush=True)
+            
+
         ## Generate outro audio
-        _audio, length, timeStampes = human_voice_generator(outro, []) # No keywords
+        _audio, length, timeStampes = human_voice_generator(outro, [], gerne) # No keywords
         audio += _audio
         data.append({
-            "text": intro,
+            "text": outro,
             "length": length,
             "keywords": None,
             "timeStamps": None,
             "image": None
         })
         totalLength += length
+        print("Outro audio Generated!", flush=True)
         
         assert len(audio) == totalLength, "Error: Audio length didn't match."
         bgm = bgm_generator(gerne, length)
-
-        audio.overlay(bgm, position=0)
+        audio = audio.overlay(bgm, position=0)
+        print("BGM audio Generated!", flush=True)
 
         # Start producing video
         '''
