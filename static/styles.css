@@ -1,0 +1,111 @@
+/* Style inputs, select elements and textareas */
+input[type=text], select, textarea{
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    resize: vertical;
+
+  }
+body{
+    background-color: #2F2873;
+}
+/* Style the label to display next to the inputs */
+label {
+padding: 12px 12px 12px 0;
+display: inline-block;
+color: #2F2873;
+}
+h1{
+    text-align: center;
+    color: white;
+}
+img{
+    vertical-align: sub;
+}
+#image_upload{
+    display: inline-block;
+    margin-right: 16cm;
+}
+#add_another{
+    margin-left: 16cm;
+}
+/* Style the submit button */
+/* input[type=submit] {
+background-color: #04AA6D;
+color: white;
+padding: 12px 20px;
+border: none;
+border-radius: 4px;
+cursor: pointer;
+float: right;
+} */
+button {
+background-color: #2F2873;
+color: white;
+border: none;
+border-radius: 5px;
+padding: 10px 20px;
+cursor: pointer;
+transition: background-color 0.3s ease;
+}
+button:hover {
+    background-color: #4FACDC;
+}
+
+/* Style the container */
+/* .container {
+border-radius: 5px;
+background-color: #f2f2f2;
+padding: 20px;
+} */
+.container {
+    width: 90%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+textarea {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* Floating column for labels: 25% width */
+.col-25 {
+float: left;
+width: 25%;
+margin-top: 6px;
+}
+
+/* Floating column for inputs: 75% width */
+.col-75 {
+float: left;
+width: 75%;
+margin-top: 6px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+content: "";
+display: table;
+clear: both;
+}
+.output-box {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+
+/* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+.col-25, .col-75, input[type=submit] {
+    width: 100%;
+    margin-top: 0;
+}
+}

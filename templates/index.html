@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shorts producer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1><img src="{{ url_for('static', filename='ettoday_logo_circle.png') }}" style="width: 35px; height: 35px;"> Shorts Producer</h1>
+    <div class="container">
+        <form method="post" enctype="multipart/form-data">
+          <div class="row">
+            <div class="col-25">
+              <label for="shortsTitle">Title</label>
+            </div>
+            <div class="col-75">
+              <input type="text" id="shortsTitle" name="shortsTitle" placeholder="Title of Shorts..">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-25">
+              <label for="shortsLabels">Labels</label>
+            </div>
+            <div class="col-75">
+              <input type="text" id="shortsLabels" name="shortsLabels" placeholder="format: label1, label2, label3...">
+            </div>
+          </div>
+          <div class="row" id="file-upload-container">
+            <div class="col-25">
+                <label for="imageUpload">Upload Images</label>
+            </div>
+            <div class="col-75">
+                <button type="button" id="add_another" onclick="addFileUpload()">Add Another</button>
+            </div>
+            <div class="col-25">
+            </div>
+            <div class="col-75">
+                <div class="file-upload">
+                    <input type="file" id="image_upload" name="uploaded_images" multiple >
+                    <input type="text" name="descriptions" placeholder="Description for the file...">
+                </div>
+            </div>
+          </div>        
+          <div class="row">
+            <div class="col-25">
+                <label for="input_text">Enter News Report</label>
+                
+            </div>
+            <div class="col-75">
+              <textarea id="input_text" name="input_text" placeholder="Provide the text.." style="height:200px"></textarea>
+            </div>
+          </div>
+          <div class="row">
+            <button type="submit">Process Text</button>
+          </div>
+        </form>
+        {% if output %}
+        <div class="output-box">
+            <strong>{{ output }}</strong>
+        </div>
+        {% endif %}
+      </div>
+    <script>
+        function addFileUpload() {
+            var container = document.getElementById('file-upload-container');
+            var newInputDiv = document.createElement('div');
+            newInputDiv.className = 'file-upload';
+            newInputDiv.innerHTML = `
+            <div class="col-25">
+            </div>
+            <div class="col-75">
+                <div class="file-upload">
+                    <input type="file" id="image_upload" name="uploaded_images" multiple>
+                    <input type="text" name="descriptions" placeholder="Description for the file...">
+                </div>
+            </div>
+            `;
+            container.appendChild(newInputDiv);
+        }
+    </script>
+</body>
+</html>
+

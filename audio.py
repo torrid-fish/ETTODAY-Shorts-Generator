@@ -124,6 +124,7 @@ def bgm_generator(gerne: str, length: str) -> AudioSegment:
     sound = sound.fade_in(1000)
     sound = sound.fade_out(1000)
 
+    time.sleep(0.5)
     return sound
 
 
@@ -161,7 +162,7 @@ def audio_generator(sentences, gerne, singleThread=False):
     # Parallel generating audio
     else:
         print(" - [Multiple Threads] Generating audio ... ", flush=True, end='')
-        with ThreadPoolExecutor(max_workers=5) as executor:
+        with ThreadPoolExecutor(max_workers=10) as executor:
             futures = []
             futures.append(executor.submit(human_voice_generator, ListOfText[0], ListOfKeywords[0], gerne, '0', addEffect=False, reader="F1"))
 
