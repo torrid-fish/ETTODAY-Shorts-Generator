@@ -33,16 +33,35 @@ def speed_change(sound, speed=1.0):
       })
     return rate.set_frame_rate(sound.frame_rate)
 
-def human_voice_generator(text: str, keywords: list, addBeep = False, advance = 0, speed = 1.0):
+
+def effect_generator(gerne: str, keyword: str) -> str:
+    """
+    ## Args
+    - gerne: What type of the news it is.
+    - keyword: What keyword the sound effect applys on.
+    ## Return
+    - path2Sound: The path to the sound effect.
+    """
+
+    # Strategy 0: Use random assignment
+    effects = glob.glob(f"./effect/*") 
+    path2Sound = effects[randint(0, len(effects)-1)]
+
+    return path2Sound
+
+defult_speed = 1.5
+def human_voice_generator(text: str, keywords: list, gerne: str, addEffect = True, advance = 0, speed = 1.5, reader: str = 'M') -> tuple[AudioSegment, int, list]:
     """
     ## Args
     - text: A script that only contains one sentence.
     - keywords: A list of keywords, will later be used to specified the location appears in the sentence.
+    - gerne: The gerne of this news.
     - addBeep: Debugging function. Whether add beep on top of the sound.
     - advance: How many millisecond should the timestamp shift forward.
     - speed: The speed of the audio.
+    - reader: The type of the reader. 'F1' 'F2' stand for MODEL_FEMALE_1, MODEL_FEMALE_1, `M` stands for MODEL_MALE_1.
     ## Return
-    - path2Voice: The path to the generated voice.
+    - AudioSegment: Generated audio segment.
     - length: The length of the voice. (In milisecond)
     - keywordsTimeStamp (list[int]): The list of timestamp. (In milisecond)
     """
@@ -50,7 +69,12 @@ def human_voice_generator(text: str, keywords: list, addBeep = False, advance = 
     path2Voice = increment_path(Path("./audio_result"), "result", ".wav", exist_ok=False)
 
     textType = ttsClient.TYPE_TEXT
-    model = ttsClient.MODEL_MALE_1
+    # Choose reader
+    if reader[0] == 'F':
+        model = ttsClient.MODEL_FEMALE_1 if reader[1] == '1' else ttsClient.MODEL_FEMALE_2
+    else:
+        model = ttsClient.MODEL_MALE_1
+
     encoding = ttsClient.ENCODING_LINEAR16
     sampleRate = ttsClient.SAMPLE_RATE_16K
 
@@ -60,6 +84,7 @@ def human_voice_generator(text: str, keywords: list, addBeep = False, advance = 
 
     # Calculate lengths
     time.sleep(0.1) # Wait for the wav file to be completely stored
+    # Load generated wav
     sound = AudioSegment.from_file(path2Voice+'.wav', format='wav')
 
     # Speed up
@@ -68,15 +93,7 @@ def human_voice_generator(text: str, keywords: list, addBeep = False, advance = 
       })
     sound = rate.set_frame_rate(sound.frame_rate)
 
-    # Store speed up result
-    if speed != 1.0:
-        sound.export(path2Voice + '.wav', format="wav")
-
     length = len(sound) # Return the length of generated audio, in millisecond
-
-    # Configure of beep sound
-    beepLength = 100
-    beep = Sine(2000).to_audio_segment(beepLength)
 
     #########################################################################
     # Current Strategy: Directly compute based on the position of each char #
@@ -85,29 +102,21 @@ def human_voice_generator(text: str, keywords: list, addBeep = False, advance = 
     for key in keywords:
         idx = text.find(key[0])
         timeStamp = int(length * idx / len(text) - advance)
-        keywordsTimeStamp.append(timeStamp)
-        if addBeep:
-            effect = AudioSegment.from_file(effect_generator("", ""))
+        if addEffect:
+            effect = AudioSegment.from_file(effect_generator(gerne, key))
+            timeStamp -= max(0, timeStamp + len(effect) - length) # Last effect might exceed boundary
             sound = sound.overlay(effect, position=timeStamp)
+        keywordsTimeStamp.append(timeStamp)
 
     #########################################################################
-
-    # Save the result with beep
-    if addBeep:
-        path2Voice = path2Voice+'_beep.wav'
-        sound.export(path2Voice, format="wav")
-
-    # Add filename extension for special case
-    if not addBeep and speed != 1.0:
-        path2Voice = path2Voice + '.wav'
 
     # Sanity Check
     assert len(keywords) == len(keywordsTimeStamp), "Keywords lengths didn't match"
     
     # Return
-    return path2Voice, length, keywordsTimeStamp
+    return sound, length, keywordsTimeStamp
 
-def bgm_generator(gerne: str, length: str) -> str:
+def bgm_generator(gerne: str, length: str) -> AudioSegment:
     """
     ## Args
     - gerne: What type of the news it is.
@@ -132,34 +141,4 @@ def bgm_generator(gerne: str, length: str) -> str:
     sound = sound.fade_in(1000)
     sound = sound.fade_out(1000)
 
-    sound.export(path2Bgm, format="wav")    
-
-    return path2Bgm
-
-def effect_generator(gerne: str, keyword: str) -> str:
-    """
-    ## Args
-    - gerne: What type of the news it is.
-    - keyword: What keyword the sound effect applys on.
-    ## Return
-    - path2Sound: The path to the sound effect.
-    """
-
-    # Strategy 0: Use random assignment
-    effects = glob.glob(f"./effect/*") 
-    path2Sound = effects[randint(0, len(effects)-1)]
-
-    return path2Sound
-
-content = "朱立倫下午在出席侯友宜新北市工商婦女後援會成立大會後證實，這周有與柯文哲見面。\
-    朱立倫說，他與柯文哲長期保持溝通聯繫，上個月談的主題重點是立委各選區的協調工作，\
-        這周見面主要是針對於選前如何來成為一個政黨聯盟或選舉聯盟，選後共同變成執政聯盟。"
-keywords = ["有和柯見面", "協調工作", "證實", "執政聯盟"]
-path, length, keywords = human_voice_generator(content, keywords, True, 500, 1.5)
-print(path, length, keywords)
-
-temp = AudioSegment.from_file(path, format='wav')
-path = bgm_generator("wow", len(temp))
-bgm = AudioSegment.from_file(path, format='wav')
-temp = temp.overlay(bgm, position=0)
-temp.export('./audio_result/result.wav', format='wav')
+    return sound

@@ -2,25 +2,26 @@
 
 ## Structure
 
-- `./main.py`
+- `main.py`
     - The entrance into our system, will finally generate a "shorts" video
-- `./audio.py`
+
+- `audio.py`
     - Functions regarding audio
-    - `human_voice_generator()`
-    - `effect_generator()`
-    - `bgm_generator()`
+    - `human_voice_generator(text, keywords, gerne, addBeep, advance, speed, reader)`
+    - `effect_generator(gerne, keyword)`
+    - `bgm_generator(gerne, length)`
 - `/bgm`
     - The bgm list
 - `/effect`
     - The sound effect list
-- `audio_result`
+- `/audio_result`
     - Store generated audio result
-- script.py
+- `script.py`
     - The function that will generate the script for TTS
-    - `script_generator()`
-- image.py
+    - `script_generator(text, length, imgsDescription)`
+- `image.py`
     - The fun tions that will generate image
-
+    - `picture_generator(imageDescription)`
 ## Dependencies
 Please check `requirement.txt`.
 
