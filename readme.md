@@ -30,6 +30,14 @@ Use `pip install requirement.txt` to install those dependencies.
 ```
 Yating-TTS-SDK==0.1.2
 pydub==0.25.1
+aiohttp==3.8.6 
+aiosignal==1.3.1 
+async-timeout==4.0.3 
+frozenlist==1.4.0 
+multidict==6.0.4 
+openai==0.28.1 
+yarl==1.9.2
+requests==2.26.0
 ```
 > You also need to install `ffmpeg` to edit audio (pydub relies on it):
 
