@@ -34,7 +34,6 @@ def effect_generator(gerne: str, keyword: str) -> str:
 
     return path2Sound
 
-defult_speed = 1.5
 def human_voice_generator(text: str, keywords: list, gerne: str, fileName: str, addEffect = True, advance = 0, speed = 1.5, reader: str = 'M') -> tuple[AudioSegment, int, list]:
     """
     ## Args

@@ -1,11 +1,12 @@
+import os
 from script import script_generator
 from image import get_img
 from audio import audio_generator, bgm_generator
 from pathlib import Path
-import sys
-import os
-
-import sys
+import cv2
+import numpy as np
+from moviepy.editor import *
+from video import text_to_video
 
 def move_cursor(row, col):
     sys.stdout.write("\x1b[{};{}H".format(row, col))
@@ -31,6 +32,8 @@ def main(length: int, text: str, imgs: list, imgsDescription: list[str], gerne: 
 
         print("Complete!", flush=True)
 
+        print(sentences)
+
         print("Generating audio and images ... ", flush=True)
 
         # Create folder if not exist
@@ -42,12 +45,15 @@ def main(length: int, text: str, imgs: list, imgsDescription: list[str], gerne: 
         # Create images
         ListOfImage = []
         ListOfImageReal = []
-        print(" - Generating Images ... ", flush=True, end='')
+        i = 0
+        print(" - Generating Images ... ", flush=True, end='\n')
         for s in sentences:
             if s["imageDescription"]:
                 img, r = get_img(s["imageDescription"], imgs)
                 ListOfImage.append(img)
                 ListOfImageReal.append(r)
+                print(f"{int(100 * i / (len(sentences)-2))}% done")
+                i += 1
         
         assert len(ListOfImage) == len(ListOfAudio) - 2, "The number of images and sentences are not matched"
         print("Done!", flush=True)
@@ -88,35 +94,33 @@ def main(length: int, text: str, imgs: list, imgsDescription: list[str], gerne: 
         print('\033[32C', end='') # cursor right 32 char
         print("Complete!", flush=True)
 
-        # Start producing video
-        print("Generating video ... ", flush=True)
-        '''
-        # Start to apply video editing here: 
-        - audio: Final audio data
-        - totalLength: The length of this audio data
-        - data: Data of each sentence, which contains 
-            - "text"
-            - "length"
-            - "keywords"
-            - "timeStamps"
-            - "image"
-            - "imageReal"
-        '''
+        print(data)
 
-        print("Complete!", flush=True)
+        idx = 0
+        for d in data:
+            img = d["image"]
+            p = f'imgs/photo{idx}.jpg'
+            img.save(p)
+            d["image"] = p
+            idx += 1
+
+        audio.export('audio.wav', format="wav")
+
+        # Start producing video
+        text_to_video(data, dest, 'audio.wav')
+        print("Complete!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        print(f"Stored at {dest}")
+
         return True
     except ...:
         return False
     
+from PIL import Image
+length = 15
+text = "2022 新竹 X 梅竹黑客松在 10 月 22 日及 23 日 於國立清華大學新體育館登場，本次競賽吸引近 250 位臺清交和各大專院校生、社會人士及高中生等參賽者，總與 會人數超過 450 人。梅竹黑客松現為全臺最大的校園黑客松，定期於每年 10 月底舉行大型黑客松年會，由企業提 供資源，供參賽者在兩天一夜中開發出別具創新力的實作品。\\r\\n\\r\\n今年的競賽組別為「黑客組」與「創客 交流組」，「黑客組」由七家合作企業分別帶領，包含台積電、ASML、意法半導體、中國信託、恩智浦半導體、原相科技以及 Kronos Research；「創客交流組」則攜手新竹市政府，透過融入新竹居民真實生活情境，讓參賽者在實作過程中，思索社會議題不同的可行解。\\r\\n\\r\\n緊迫的兩天時間內，許多參賽者以日常經驗出發，契合主題同時解決生活中的難題。如意法半導體組的「黑客松後黑顆肝」，以自種的繡球花為靈感，打造出可自動澆水及除蟲的溫室；首度參與便奪得梅竹大獎第三名的「吳星瀚粉絲後援會」也提及在學習交易的過程中屢受挫折的經歷，因此希望設計出 User-Friendly 的操作介面，更加貼近使用者的需求，降低耗費的時間成本。\\r\\n\\r\\n中國信託在接受 採訪時給予參賽 者兩點建議 : 首先，不論競賽規模大小，良好的溝通是幫助團隊完成終極目標的重要基石，保持正面態度並避免帶 入負面情緒，積極克服困難，才是梅竹黑客松的精神。另外，許多參賽者為了讓作品呈現更豐富， 傾向常見的「加法思考」，在實作的過程中塞入大量功能與特色，卻往往落入華而不實的窠臼；運用務實的「減法思考」，聚焦於做出自身特色的服務，亦不失為比賽中脫穎而出的好方法。\\r\\n\\r\\n而同為黑客組企業的 ASML 則以本身「3C」的企業文化鼓勵參賽者，透過勇於表達與思辨的「Challenge」與「Care」的傾聽與包容，才能打造出 「Collaborate」的團隊共贏。參與企業都希冀透過開放、創新的活動氛圍，在共同解題與合作的過程中，縮短產學 間的角色差距。"
+imgsDescription = ['梅竹黑客松攜手七家業界巨頭及新竹市政府，實現產官學合作願景。', '2022新竹X梅竹黑客松 圓滿落幕，超過450人報名參賽共襄盛舉。']
+gerne="生活"
+imga = Image.open('uploaded_images/d6703317.jpg')
+imgb = Image.open('uploaded_images/d6703316.jpg')
 
-# length = 20
-# text = "國立清華大學本月9日迄今校園多次無預警停電，學生會不滿校方昨天片面宣布下周23到26日部分宿舍區白天停止供電，今天發文批評是枉顧學生權益，也傳出有學生要發起抗議行動。台電新竹區營業處獲悉校園停電狀況主動出手，今天到校會勘，允諾協助清大將於明後天先協助布設臨時電纜，校方傍晚證實下周一23日起恢復正常供電。\
-# 清大從9日起短短10天內停電6次，3次為無預警停電，學生哀鴻遍野抱怨電器受損、實驗中斷等，更不滿宿舍區還要限電。校方說明，是因供應全校約一半電力的第二高壓站電纜因老舊及受潮突然故障，緊急修復又有另處電纜故障，預計29日全面修復。\
-# 對此，清華大學學生會今天在臉書發文，表示停電已影響教職員工生，且至今仍處限電狀態，尤其不滿校方昨晚在未與學生討論的情況下，擅自發布未來一周，也就是23日到26日的部分宿舍區白天早上11至傍晚5點停止供電，此舉嚴重罔顧住宿生權益。\
-# 據了解，清大校園內部電力向來由校方負責，校方因為仍正在等候新電纜到料，所以修復完成時間壓在29日。台電新竹區營業處處長胡忠興、電務副處長陳煥文等人今天早上主動到清大拜訪總務長、營繕組長，認為等候到料緩不濟急，決定協助處理。\
-# 陳煥文說，經與學校會勘診斷，台電新竹營業處決定會同學校營繕組明、後天，趁假日的學校用電離峰時段，在校園共同管路系統，先緊急舖設1.2公里長的臨時高壓電纜、並做好設備銜接，待學校到料著手修復，且測試穩定後，就會收回臨時電纜。\
-# 陳煥文表示，因應相關工程預定23日凌晨2到5時停電改接送電，並說明清大校區廣大，電纜線路也相當長，台電在電力修復方面經驗充足，且有現成的電纜線料可以先協助清大，後續也將協助清大協助申請緊急提升契約容量，讓校園用電更穩定安全。"
-# imgsDescription = ["學生沒有電在對電腦生氣的圖"]
-# gerne="大學"
-
-# main(length=length, text=text, imgsDescription=imgsDescription, gerne=gerne, imgs=["./temp.png"], dest="none")
+main(length=length, text=text, imgsDescription=imgsDescription, gerne=gerne, imgs=[imga, imgb], dest="final.mp4")

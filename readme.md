@@ -39,6 +39,8 @@ After the webpage is built, then you can visit the webpage by clicking the link 
 ## What APIs do we use
 We use serveral APIs to complete this project. Including OpenAI, Yating TTS, and DeepAI.
 
+## Figma demo
+- [Link to figma](https://www.figma.com/proto/HLK0GkoBXcb1TxgsVoSn7R/ETtoday---draft3?type=design&node-id=0-1&scaling=scale-down&page-id=0%3A1&starting-point-node-id=210%3A193&show-proto-sidebar=1)
 ## Structure of this project
 - `webpage.py`
     - The interface that the user (news editor) will see
