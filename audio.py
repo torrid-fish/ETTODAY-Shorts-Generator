@@ -3,6 +3,7 @@ from pydub.generators import Sine
 from pydub import AudioSegment
 from pathlib import Path
 from random import randint
+import os
 import time
 import glob
 import re
@@ -11,6 +12,9 @@ URL = "https://tts.api.yating.tw/v1/speeches/short"
 KEY = "49e96b51964d290aa6fec7e220372a3fe84bd928"
 
 def increment_path(folder, filename, extension=None, exist_ok=True, sep=''):
+    # Create folder if not exist
+    if not Path(folder).exists():
+        os.mkdir(Path(folder))
     # Increment path, with a filename extension at the end.
     temp = Path(folder/(filename + extension)) # Check whether existed path
     path = Path(folder/filename) # Without filename extension
@@ -147,15 +151,15 @@ def effect_generator(gerne: str, keyword: str) -> str:
 
     return path2Sound
 
-# content = "朱立倫下午在出席侯友宜新北市工商婦女後援會成立大會後證實，這周有與柯文哲見面。\
-#     朱立倫說，他與柯文哲長期保持溝通聯繫，上個月談的主題重點是立委各選區的協調工作，\
-#         這周見面主要是針對於選前如何來成為一個政黨聯盟或選舉聯盟，選後共同變成執政聯盟。"
-# keywords = ["有和柯見面", "協調工作", "證實", "執政聯盟"]
-# path, length, keywords = human_voice_generator(content, keywords, True, 500, 1.5)
-# print(path, length, keywords)
+content = "朱立倫下午在出席侯友宜新北市工商婦女後援會成立大會後證實，這周有與柯文哲見面。\
+    朱立倫說，他與柯文哲長期保持溝通聯繫，上個月談的主題重點是立委各選區的協調工作，\
+        這周見面主要是針對於選前如何來成為一個政黨聯盟或選舉聯盟，選後共同變成執政聯盟。"
+keywords = ["有和柯見面", "協調工作", "證實", "執政聯盟"]
+path, length, keywords = human_voice_generator(content, keywords, True, 500, 1.5)
+print(path, length, keywords)
 
-# temp = AudioSegment.from_file(path, format='wav')
-# path = bgm_generator("wow", len(temp))
-# bgm = AudioSegment.from_file(path, format='wav')
-# temp = temp.overlay(bgm, position=0)
-# temp.export('./audio_result/result.wav', format='wav')
+temp = AudioSegment.from_file(path, format='wav')
+path = bgm_generator("wow", len(temp))
+bgm = AudioSegment.from_file(path, format='wav')
+temp = temp.overlay(bgm, position=0)
+temp.export('./audio_result/result.wav', format='wav')
