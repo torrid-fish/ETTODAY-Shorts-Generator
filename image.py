@@ -27,7 +27,6 @@ def picture_generator(imageDescription: str) -> Image:
     stop=None,
     temperature=0.7, )
     imgDescription = response.choices[0].text.strip()
-    print("imgDes:",imgDescription)
     message = imgDescription
     size = "512x512"
 

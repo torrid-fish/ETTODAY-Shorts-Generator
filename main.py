@@ -18,18 +18,18 @@ def main(length: int, text: str, imgs: list[Image.Image], imgsDescription: list[
     
     try:
         # Generate scipt to read
+        print("Generating script ... ", end='', flush=True)
         sentences = script_generator(text, length, imgsDescription)
         title = sentences[0]["title"]
         titleKeywords = sentences[0]["keyword"]
         intro = sentences[0]["outline"][1]
         outro = sentences[0]["outline"][0] 
 
-        print("Script Generated!", flush=True)
-        print(sentences)
+        print("Complete!", flush=True)
 
-        # Generate audio
+        print("Generating audio and images ... ", end='', flush=True)
         data = []
-        ## Generate title audio
+        # Generate title audio
         audio, length, timeStampes = human_voice_generator(title, titleKeywords, gerne, addEffect=False, reader="F1")
         data.append({
             "text": title,
@@ -38,8 +38,7 @@ def main(length: int, text: str, imgs: list[Image.Image], imgsDescription: list[
             "timeStamps": timeStampes,
             "image": None
         })
-        print("Title audio Generated!", flush=True)
-        ## Generate intro audio
+        # Generate intro audio
         _audio, length, timeStampes = human_voice_generator(intro, [], gerne) # No keywords
         audio += _audio
         data.append({
@@ -49,11 +48,8 @@ def main(length: int, text: str, imgs: list[Image.Image], imgsDescription: list[
             "timeStamps": None,
             "image": None
         })
-        print("Intro audio Generated!", flush=True)
-        ## Generate content audio
-        i = 0
+        # Generate content audio
         for setence in sentences[1:]:
-            i += 1
             script = setence["script"]
             imageDescription = setence["imageDescription"]
             keywords = setence["keywords"]
@@ -66,10 +62,7 @@ def main(length: int, text: str, imgs: list[Image.Image], imgsDescription: list[
                 "timeStamps": timeStampes,
                 "image": get_img(imageDescription, imgs)
             })
-            print(f"Generating content... {int(100 * i / (len(sentences)-1))}%", flush=True)
-
-
-        ## Generate outro audio
+        # Generate outro audio
         _audio, length, timeStampes = human_voice_generator(outro, [], gerne) # No keywords
         audio += _audio
         data.append({
@@ -79,16 +72,15 @@ def main(length: int, text: str, imgs: list[Image.Image], imgsDescription: list[
             "timeStamps": None,
             "image": None
         })
-        print("Outro audio Generated!", flush=True)
-        
         totalLength = len(audio)
         bgm = bgm_generator(gerne, totalLength)
         audio = audio.overlay(bgm, position=0)
-
-        print("BGM audio Generated!", flush=True)
+        print("Complete!", flush=True)
 
         # Start producing video
+        print("Generating video ... ", end='', flush=True)
         '''
+        # Start to apply video editing here: 
         - audio: Final audio data
         - totalLength: The length of this audio data
         - data: Data of each sentence, which contains 
@@ -98,13 +90,8 @@ def main(length: int, text: str, imgs: list[Image.Image], imgsDescription: list[
             - "timeStamps"
             - "images"
         '''
-        
-        # Simple test
-        audio.export("./result.wav", format="wav")
-        print(totalLength)
-        for d in data:
-            print(d)
 
+        print("Complete!")
         return True
     except ...:
         return False
