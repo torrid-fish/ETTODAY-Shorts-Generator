@@ -38,6 +38,8 @@ multidict==6.0.4
 openai==0.28.1 
 yarl==1.9.2
 requests==2.26.0
+waitress==2.1.2
+flask==3.0.0
 ```
 > You also need to install `ffmpeg` to edit audio (pydub relies on it):
 
