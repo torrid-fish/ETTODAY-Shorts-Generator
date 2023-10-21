@@ -85,7 +85,7 @@ def main(length: int, text: str, imgs: list, imgsDescription: list[str], gerne: 
         audio = audio.overlay(bgm, position=0)
         print("Done!", flush=True)
         print('\033[5A', end='') # cursor up 5 lines
-        print('\033[31C', end='') # cursor right 29 char
+        print('\033[32C', end='') # cursor right 32 char
         print("Complete!", flush=True)
 
         audio.export("./result.wav", format="wav")
