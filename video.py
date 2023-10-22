@@ -192,7 +192,7 @@ def set_punchcard_time(datas):
     return timeStamp_list,punch_set,length_list
 
 def punch_pic_generator(img,punch):
-    font = ImageFont.truetype('NotoSansTC-VariableFont_wght.ttf', 150)
+    font = ImageFont.truetype('NotoSansTC-VariableFont_wght.ttf', 120)
     anchor = 'mm'
     img = Image.fromarray(img)
     draw = ImageDraw.Draw(img)
@@ -400,57 +400,47 @@ def left_right(img,secs,effects,FPS):
 def in_out(img,secs,effects,FPS):
     outputs=[]
     video_size = (1170, 2532)
+    outbound = 1
+    inbound = 0.9
+    def resize(img,length,factor):
+        h, w = img.shape[:2]
+        scale_factor = max(length / w , length/h)*factor
+        new_w = int(w * scale_factor)
+        new_h = int(h * scale_factor)
+        return cv2.resize(img, (new_w, new_h))
     crop = img
     BG  = img
-    h, w = img.shape[:2]
-    center = [w//2,h//2]
-    shorter = min(h,w)
-    outbound = shorter*9/10 / 2 
-    inbound = shorter*4/5 / 2
-
-    BG_outbound = [h/2,h]
-    BG_inbound  = [h/2*4/5,h*4/5]
-
-    step  =   (outbound  -   inbound)/(secs*FPS)
-
-    BG_step  =   [(BG_outbound[0]  -   BG_inbound[0])/(secs*FPS),(BG_outbound[1]  -   BG_inbound[1])/(secs*FPS)]
-
+    steps = (outbound - inbound)//int(FPS*secs)
     if(effects == 5):
-        dr  = 1
-        start =  inbound
-        start_BG =  BG_outbound
+        start = inbound
+        dr = 1
     else:
+        start = outbound
         dr = -1
-        start =  outbound
-        start_BG =  BG_inbound
+    outputs = []
+    for i in range(int(FPS*secs)):
+        temp_crop = resize(crop,1500,start)
+        temp_BG = resize(BG,2500,start)
 
-    for i in  range(int(round(secs*FPS))):
-
-
-        temp_crop = crop[int(round(center[1]-start)):int(round(center[1]+start)),int(round(center[0]-start)):int(round(center[0]+start))]
-        temp_BG = BG[int(round(center[1]-start_BG[1]/2)):int(round(center[1]+start_BG[1]/2)),int(round(center[0]-start_BG[0]/2)):int(round(center[0]+start_BG[0]/2))]
-        print('check')
-        print(img)
-        print(temp_crop.shape)
-
-        temp_crop = cv2.resize(temp_crop, (1000,1000))
-        temp_BG = cv2.resize(temp_BG, video_size)
-        temp_BG = cv2.GaussianBlur(temp_BG, (5, 5), 0)
-        temp_BG = cv2.add(temp_BG, np.array([-100.0]))  # subtract 50 from every pixel value
-
-        start_x = (1170 - 1000) // 2
-        start_y = (2532 - 1000) // 2
-
-        # Determine the ending point of the smaller image
-        end_x = start_x + 1000
-        end_y = start_y + 1000
-
-        temp_BG[start_y:end_y, start_x:end_x] = temp_crop
+        h, w = temp_crop.shape[:2]
+        #print('crop')
+        #print(h,w)
+        center_crop_h = h//2
+        center_crop_w = w//2
+        temp_crop = temp_crop[center_crop_h-500:center_crop_h+500,center_crop_w-500:center_crop_w+500]
+        #print(temp_crop.shape)
+        h, w = temp_BG.shape[:2]
+        #print(temp_BG.shape)
+        center_BG_h = h//2
+        center_BG_w = w//2
+        temp_BG = temp_BG[center_BG_h-1266:center_BG_h+1266,center_BG_w-585:center_BG_w+585]
+        #print(temp_BG.shape)
+        temp_BG[1266-500:1266+500,585-500:585+500] = temp_crop
         outputs.append(temp_BG)
-        start_BG[0] += i* BG_step[0]*dr
-        start_BG[1] += i* BG_step[1]*dr
-        start += i* step*dr
+        start += i* dr * steps
+    return outputs
 
+    
     return outputs
 def no_effect(img,secs,effects,FPS):
     video_size = (1170, 2532)
@@ -468,13 +458,13 @@ def no_effect(img,secs,effects,FPS):
     h, w = crop.shape[:2]
     center_h = h//2
     center_w = w//2
-    print('crop')
-    print(h,w)
+    #print('crop')
+    #print(h,w)
     crop = crop[center_h-500:center_h+500,center_w-500:center_w+500]
 
     h, w = BG.shape[:2]
-    print('BG')
-    print(h,w)
+    #print('BG')
+    #print(h,w)
     center_h = h//2
     center_w = w//2
     BG = BG[center_h-1266:center_h+1266,center_w-585:center_w+585]
@@ -491,15 +481,16 @@ def generate_video_picture(imgs,secs,effects,FPS):
     #effect 0:None,1:right,2:up,3:left,4:down,5,zoom_in,zoom out
     image_lists=  []
     for i,image in enumerate(imgs):
+        effects[i] = 0
         temp = []
-        # if(effects[i] in [1,2]):
-        #     temp = up_down(image,secs[i],effects[i],FPS)
-        # elif(effects[i] in [3,4]):
-        #     temp = left_right(image,secs[i],effects[i],FPS)
-        # elif(effects[i] in [5,6]):
-        #     temp = in_out(image,secs[i],effects[i],FPS)
-        # else:
-        temp = no_effect(image,secs[i],effects[i],FPS)
+        if(effects[i] in [1,2]):
+            temp = up_down(image,secs[i],effects[i],FPS)
+        elif(effects[i] in [3,4]):
+            temp = left_right(image,secs[i],effects[i],FPS)
+        elif(effects[i] in [5,6]):
+            temp = in_out(image,secs[i],effects[i],FPS)
+        else:
+            temp = no_effect(image,secs[i],effects[i],FPS)
         image_lists += temp
 
     return  image_lists
@@ -533,8 +524,8 @@ def video_generator(data, dest, audio):
     imgs, secs, effects = generate_video_picture_api(data)
     print("Complete!")
 
-    print(input_text, video_list, title)
-    print(imgs,secs,effects)
+    #print(input_text, video_list, title)
+    #print(imgs,secs,effects)
     # Raw video
     print("Generating raw video frames ... ", flush=True, end='')
     generated_frames = generate_video_picture(imgs, secs, effects,FPS)

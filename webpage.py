@@ -58,9 +58,9 @@ def post():
     
     print(f'imgsDescription: {imgsDescription}')
 
-    result = main(length=input_length, text=input_text, imgsDescription=imgdes, gerne=input_labels, imgs=image_PIL_array, dest=None)
-
-    return render_template('index.html', output=result)
+    dest = "result.mp4"
+    result = main(length=input_length, text=input_text, imgsDescription=imgdes, gerne=input_labels, imgs=image_PIL_array, dest=dest)
+    return render_template('index.html', output='Done')
 
 
 if __name__ == '__main__':
