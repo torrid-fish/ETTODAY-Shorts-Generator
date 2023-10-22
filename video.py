@@ -565,3 +565,4 @@ def video_generator(data, dest, audio):
     audio.export(audioPath, format='wav')
     
     combine_audio_video(audioPath, videoPath, dest, FPS)
+    os.system("rm video.mp4")
