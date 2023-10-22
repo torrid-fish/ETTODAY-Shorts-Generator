@@ -29,8 +29,8 @@ def post():
 
     if not Path('./uploaded_images').exists(): 
         os.mkdir('./uploaded_images')
-    
-    os.system('rm uploaded_images/*')
+    else:
+        os.system('rm uploaded_images/*')
 
     image_PIL_array = []
     file_to_img = []
