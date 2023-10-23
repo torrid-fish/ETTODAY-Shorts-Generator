@@ -42,9 +42,8 @@ sudo apt-get install ffmpeg
 ## How to use
 We wrote a simple front-end webpage for user to input their data.
 
-<center>
-<img src="./demo/structure.png">
-</center>
+![](./demo/structure.png)
+
 
 Use the following command to start the webpage server:
 ```
@@ -99,7 +98,7 @@ Here is the link to the figma of how we think their APP should be redesigned int
     - The functions that help us generate video
     - Called by `main.py`
 
-## Contributor
+## Contributors
 - 吳冠霆 WU KUAN TING
 - 廖幃萱 LIAO WEI XUAN
 - 賴姿紜 LAI ZI YUN
