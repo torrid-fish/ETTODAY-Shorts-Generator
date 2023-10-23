@@ -42,7 +42,9 @@ sudo apt-get install ffmpeg
 ## How to use
 We wrote a simple front-end webpage for user to input their data.
 
-![](./demo/structure.png)
+<center>
+<img src="./demo/structure.png">
+</center>
 
 Use the following command to start the webpage server:
 ```
