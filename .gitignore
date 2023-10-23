@@ -3,3 +3,5 @@ __pycache__/
 uploaded_images/
 *.mp4
 *.wav
+
+!demo/result.mp4
