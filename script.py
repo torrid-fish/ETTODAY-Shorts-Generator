@@ -163,7 +163,7 @@ def script_generator(text: str, length: int, imgsDescription: list[str]) -> list
         input_description += f"img{i}:" + element + "\n"
     input_length = f"input length {length}s\n"
 
-    openai.api_key = "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"
+    openai.api_key = "<YOUR OPENAI API KEY>"
     
     completion = openai.ChatCompletion.create(
     model="gpt-4",

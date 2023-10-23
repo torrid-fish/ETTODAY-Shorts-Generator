@@ -15,7 +15,7 @@ def picture_generator(imageDescription: str) -> Image:
     - (Image): Return an image with class Image (PIL).
     """
     # 定義您的OpenAI API金鑰
-    API_KEY = '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'
+    API_KEY = '<YOUR OPENAPI API KEY>'
     openai.api_key = API_KEY
 
     #Translate to English
@@ -37,7 +37,7 @@ def picture_generator(imageDescription: str) -> Image:
         'text': message,
         'grid_size': '1',
     },
-    headers={'api-key': '7edaf750-0e79-4544-ad5f-8e71da8c0b8e'},
+    headers={'api-key': '<YOUR DEEPAI API KEY>'},
     )
 
     image_url = r.json()["output_url"]

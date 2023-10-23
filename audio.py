@@ -10,7 +10,7 @@ import glob
 import re
 
 URL = "https://tts.api.yating.tw/v1/speeches/short"
-KEY = "49e96b51964d290aa6fec7e220372a3fe84bd928"
+KEY = "<YOUR YATINGTTS API KEY>"
 
 def speed_change(sound, speed=1.0):
     rate = sound._spawn(sound.raw_data, overrides={

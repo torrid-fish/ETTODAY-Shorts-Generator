@@ -1,4 +1,4 @@
-# ettoday_shorts_generator
+# ETTODAY_Shorts_Generator
 
 ![](./demo/webpage.png)
 
@@ -6,6 +6,8 @@
 
 This is a project that we implement the system that can let the user provide some contents and pictures, \
 then this system can make a "shorts" video that is relative to this topic with just one click.
+
+![](./demo/abstract.png)
 
 ## How to install dependencies
 
@@ -37,7 +39,11 @@ sudo apt-get update && apt-get upgrade
 ```
 sudo apt-get install ffmpeg
 ```
-## How to start the webpage server
+## How to use
+We wrote a simple front-end webpage for user to input their data.
+
+![](./demo/structure.png)
+
 Use the following command to start the webpage server:
 ```
 python3 webpage.py
@@ -46,11 +52,19 @@ After the webpage is built, then you can visit the webpage by clicking the link 
 ## What APIs do we use
 We use serveral APIs to complete this project. Including OpenAI, Yating TTS, and DeepAI.
 
+In order to use their service, you need to fill up their APIs in the following position:
+
+#### Yating TTS: `audio.py line 13`
+#### OpenAI: `image.py line 18` and  `script.py line 166`
+#### DeepAI: `image.py line 40`
+
 ## Figma demo
+Here is the link to the figma of how we think their APP should be redesigned into.
 - [Link to figma](https://www.figma.com/proto/HLK0GkoBXcb1TxgsVoSn7R/ETtoday---draft3?type=design&node-id=0-1&scaling=scale-down&page-id=0%3A1&starting-point-node-id=210%3A193&show-proto-sidebar=1)
 ## Structure of this project
 - `/demo`
     - The resources for demoing
+    - There are demo result (`result.mp4`), some images on this readme, and a slides used in our represetation (`slides.pdf`)
 - `/templates`
     - The templates of the webpage that the user will see
 - `/static`
@@ -82,3 +96,10 @@ We use serveral APIs to complete this project. Including OpenAI, Yating TTS, and
 - `video.py`
     - The functions that help us generate video
     - Called by `main.py`
+
+## Contributor
+- 吳冠霆 WU KUAN TING
+- 廖幃萱 LIAO WEI XUAN
+- 賴姿紜 LAI ZI YUN
+- 林亞葶 LIN YA TING
+- 鐘萱容 ZHONG XUAN RUNG
