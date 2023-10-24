@@ -1,4 +1,4 @@
-# ETTODAY_Shorts_Generator
+# ETTODAY-Shorts-Generator
 
 ![](./demo/webpage.png)
 
